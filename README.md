@@ -10,3 +10,5 @@ node index.js
 
 See some sprite tiles:
 http://localhost:8080/terrain-background,terrain-lines,terrain-labels/12/654/1583.png
+
+If you want horizontal sprites, append `?horiz=true` to the URL.

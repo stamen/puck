@@ -23,6 +23,8 @@ app.configure(function() {
 });
 
 app.get("/:tilesets/:z/:x/:y.png", function(req, res) {
+  var horiz = !!req.query.horiz || false;
+
   var tasks = req.params.tilesets.split(",")
     .map(function(x) {
       return x.trim();
@@ -57,16 +59,31 @@ app.get("/:tilesets/:z/:x/:y.png", function(req, res) {
     });
 
   async.parallel(tasks, function(err, images) {
-    var canvas = new Canvas(256 * images.length, 256),
+    var width = 256,
+        height = 256;
+
+    if (horiz) {
+      width *= images.length;
+    } else {
+      height *= images.length;
+    }
+
+    var canvas = new Canvas(width, height),
         ctx = canvas.getContext("2d");
 
     var x = 0;
+    var y = 0;
+
     images.forEach(function(img) {
       if (img) {
-        ctx.drawImage(img, x, 0, 256, 256);
+        ctx.drawImage(img, x, y, 256, 256);
       }
 
-      x += 256;
+      if (horiz) {
+        x += 256;
+      } else {
+        y += 256;
+      }
     });
 
     res.set("Content-Type", "image/png");
